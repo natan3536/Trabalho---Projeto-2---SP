@@ -23,6 +23,8 @@ Para gerar ou atualizar as bases basta correr:
 python generate_datasets.py
 ```
 
+Relatório em world na pasta compartilhada pelo onedrive
+
 ## 2. Como Rodar no demo.exe
 Para testar os protocolos abrem-se dois terminais (um para cada entidade).
 

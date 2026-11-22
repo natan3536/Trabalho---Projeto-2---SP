@@ -59,8 +59,4 @@ for size in SIZES:
     with open(seguradora_filename, "w", encoding="utf-8") as f:
         f.write("\n".join(seguradora_list) + "\n")
 
-    # Guardar a lista da interseção esperada para validação dos resultados do demo.exe
-    # with open(intersection_filename, "w", encoding="utf-8") as f:
-    #     f.write("\n".join(sorted(common_elements)) + "\n")
-
     print(f" -> Gerado base com {label.upper()}: {size} | {num_intersection} intersecao (10%)")
