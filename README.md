@@ -42,6 +42,7 @@ Protocolos (-p):
     1: Server-aided
     2: Diffie-Hellman
     3: Oblivious Transfer (OT)
+
 ### Medição do tempo e do tráfego
 
 Em cada execução usam-se 3 terminais (4 no server-aided), todos com:
@@ -50,12 +51,12 @@ cd ~/PSI-master
 D=~/Trabalho---Projeto-2---SP/dataset
 ```
 
-Substituir `<P>` pelo protocolo (0, 1, 2 ou 3) e `<N>` pelo tamanho (5k, 10k, 20k, 30k ou 40k).
+Substituir `<P>` pelo protocolo (0, 1, 2 ou 3), `<N>` pelo tamanho (5k, 10k, 20k, 30k ou 40k) e `<R>` pela repetição (1, 2 ou 3).
 
 Naive, DH e OT (-p 0, 2, 3):
 ```bash
 # Terminal 1 - captura
-sudo tcpdump -i lo -B 131072 -w p<P>_<N>.pcap tcp port 7766
+sudo tcpdump -i lo -B 131072 -w p<P>_<N>_r<R>.pcap tcp port 7766
 # Terminal 2 - hospital
 ./demo.exe -r 0 -p <P> -f $D/hospital_<N>.txt > /dev/null
 # Terminal 3 - seguradora
@@ -65,7 +66,7 @@ time ./demo.exe -r 1 -p <P> -f $D/seguradora_<N>.txt | grep Found
 Server-aided (-p 1):
 ```bash
 # Terminal 1 - captura
-sudo tcpdump -i lo -B 131072 -w p1_<N>.pcap tcp port 7766
+sudo tcpdump -i lo -B 131072 -w p1_<N>_r<R>.pcap tcp port 7766
 # Terminal 2 - servidor
 ./demo.exe -r 0 -p 1 -f README.md > /dev/null
 # Terminal 3 - hospital
@@ -78,19 +79,20 @@ No fim, Ctrl+C no Terminal 1.
 
 Notas:
 - O tempo é o valor `real` do `time` (o `demo.exe` não mostra o tempo).
-- No server-aided usa-se o tempo do último cliente a arrancar.
 - No DH e no OT só o `-r 1` mostra a interseção.
 - O `-B 131072` evita que se percam pacotes nos tamanhos maiores.
+- Cada combinação foi executada 3 vezes (60 execuções).
 
 ## 3. Resultados
 
 Na pasta `resultados_demo/`:
 
-- `dados_demo.csv`: tempo, pacotes, bytes e interseção de cada execução
-- `grafico_tempo.png`, `grafico_tempo_log.png`, `grafico_trafego.png`: gráficos
-- `capturas/`: as 20 capturas `.pcap`
+- `resultados_demo.csv`: tempo, pacotes, bytes e interseção de cada uma das 60 execuções
+- `medias_demo.csv`: médias e desvio padrão por protocolo e tamanho
+- `grafico_tempo.png`, `grafico_tempo_log.png`, `grafico_trafego.png`: gráficos do relatório
+- `capturas/`: as 60 capturas `.pcap`
 
 Pacotes e bytes de todas as capturas:
 ```bash
-capinfos -T -c -d p?_*k.pcap
+capinfos -T -c -d resultados_demo/capturas/*.pcap
 ```
