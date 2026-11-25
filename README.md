@@ -23,10 +23,10 @@ Para gerar ou atualizar as bases basta correr:
 python generate_datasets.py
 ```
 
-Relatório em world na pasta compartilhada pelo onedrive
+Relatório em Word na pasta partilhada pelo OneDrive.
 
 ## 2. Como Rodar no demo.exe
-Para testar os protocolos abrem-se dois terminais (um para cada entidade).
+Para testar os protocolos abrem-se dois terminais (um para cada entidade); para medir tempo e tráfego usa-se mais um terminal de captura (ver abaixo).
 
 Exemplo:
 Terminal 1:
@@ -96,3 +96,35 @@ Pacotes e bytes de todas as capturas:
 ```bash
 capinfos -T -c -d resultados_demo/capturas/*.pcap
 ```
+
+## 4. Benchmark sintético (psi.exe)
+
+O `psi.exe` da branch `benchmark` mede diretamente o tempo e os dados enviados/recebidos, sem leitura de ficheiros nem captura de tráfego. Gera os elementos internamente a partir de `-n`, por isso só o tamanho coincide com o dataset.
+
+Compilação:
+```bash
+git clone --recursive -b benchmark https://github.com/encryptogroup/PSI PSI-benchmark
+cd PSI-benchmark
+make
+```
+
+Em cada execução usam-se 2 terminais (primeiro o `-r 0`):
+
+Substituir `<P>` pelo protocolo (0, 2 ou 3) e `<N>` pelo tamanho (5000, 10000, 20000, 30000 ou 40000).
+```bash
+# Terminal 1
+./psi.exe -r 0 -p <P> -b 16 -n <N>
+# Terminal 2
+./psi.exe -r 1 -p <P> -b 16 -n <N>
+```
+
+No fim, o programa mostra `Required time`, `Data sent` e `Data received` (valores registados da parte `-r 0`).
+
+Notas:
+- O server-aided (-p 1) não foi incluído, porque o modo benchmark tem um erro com este protocolo.
+- O `psi.exe` mostra os dados em "MB", mas a unidade é MiB (1 MiB = 1 048 576 bytes).
+- Cada combinação foi executada 5 vezes (75 execuções), com o script `benchmark_psi/bench_projeto.sh` (copiar para a pasta do `psi.exe` e correr `bash bench_projeto.sh`).
+
+Resultados na pasta `benchmark_psi/`:
+
+- `resultados_projeto2.csv`: tempo, dados enviados e dados recebidos de cada uma das 75 execuções
